@@ -41,8 +41,15 @@ def get_ffmpeg_path() -> str:
     Obtiene la ruta al ejecutable de FFmpeg.
     Primero busca en la carpeta del ejecutable, luego en PATH.
     """
-    # Si estamos en un ejecutable, buscar FFmpeg en varias ubicaciones
+    # Si estamos en un ejecutable PyInstaller
     if getattr(sys, 'frozen', False):
+        # Para --onefile: archivos extraídos a sys._MEIPASS
+        meipass_dir = getattr(sys, '_MEIPASS', None)
+        if meipass_dir:
+            ffmpeg_meipass = Path(meipass_dir) / "ffmpeg.exe"
+            if ffmpeg_meipass.exists():
+                return str(ffmpeg_meipass)
+        
         exe_dir = Path(sys.executable).parent
         
         # Buscar en el directorio del ejecutable
@@ -78,6 +85,13 @@ def get_ffmpeg_path() -> str:
 def get_ffprobe_path() -> str:
     """Obtiene la ruta al ejecutable de FFprobe."""
     if getattr(sys, 'frozen', False):
+        # Para --onefile: archivos extraídos a sys._MEIPASS
+        meipass_dir = getattr(sys, '_MEIPASS', None)
+        if meipass_dir:
+            ffprobe_meipass = Path(meipass_dir) / "ffprobe.exe"
+            if ffprobe_meipass.exists():
+                return str(ffprobe_meipass)
+        
         exe_dir = Path(sys.executable).parent
         
         # Buscar en el directorio del ejecutable

@@ -120,6 +120,7 @@ def create_executable():
         shutil.rmtree(build_dir)
     
     # Comando PyInstaller
+    icon_path = SCRIPT_DIR / "logo.ico"
     cmd = [
         sys.executable,
         "-m", "PyInstaller",
@@ -127,12 +128,17 @@ def create_executable():
         "--console",  # Mostrar consola
         "--name", APP_NAME,
         "--clean",
+        # Icono del ejecutable
+        "--icon", str(icon_path) if icon_path.exists() else "",
         # Añadir archivos de datos (FFmpeg)
         "--add-data", f"{ffmpeg_dir / 'ffmpeg.exe'};.",
         "--add-data", f"{ffmpeg_dir / 'ffprobe.exe'};.",
         # Archivo principal
         str(SCRIPT_DIR / "main.py")
     ]
+    # Quitar --icon si no existe el archivo
+    if not icon_path.exists():
+        cmd = [c for c in cmd if c != "--icon" and c != ""]
     
     print(f"  Ejecutando: {' '.join(cmd)}")
     
@@ -160,6 +166,7 @@ def create_single_exe():
     print("  Nota: Esta opción es más lenta de iniciar pero más portable")
     
     ffmpeg_dir = SCRIPT_DIR / "ffmpeg"
+    icon_path = SCRIPT_DIR / "logo.ico"
     
     cmd = [
         sys.executable,
@@ -172,6 +179,10 @@ def create_single_exe():
         "--add-data", f"{ffmpeg_dir / 'ffprobe.exe'};.",
         str(SCRIPT_DIR / "main.py")
     ]
+    # Añadir icono si existe
+    if icon_path.exists():
+        cmd.insert(cmd.index("--clean") + 1, "--icon")
+        cmd.insert(cmd.index("--icon") + 1, str(icon_path))
     
     result = subprocess.run(cmd, cwd=SCRIPT_DIR)
     
