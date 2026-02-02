@@ -40,9 +40,9 @@ python main.py
 
 ```bash
 # Esto descarga FFmpeg y crea el .exe
-python build.py
+python build.py --onefile
 ```
-
+ (no hace falta el .spec)
 El ejecutable se creará en `dist/avi2mp4/`.
 
 ## Configuración por Defecto
